@@ -11,10 +11,12 @@ import java.util.TimerTask;
 
 public class BellUpdater {
   public static void main(String[] args) throws IOException {
-    if (!new File("settings.properties").exists()) {
-      new Utils().makeProperties();
-
+    Utils utils = new Utils();
+    utils.copyFile("settings.properties");
+    if (!new File("latest.txt").exists()) {
+      new File("latest.txt").createNewFile();
     }
+
     Properties properties = new Properties();
     properties.load(new FileInputStream("settings.properties"));
     URL url = new URL(properties.getProperty("URL"));
@@ -25,20 +27,27 @@ public class BellUpdater {
           @Override
           public void run() {
             try {
-              if (properties.getProperty("AUTO_KILL").equals("ON")) {
-                Runtime.getRuntime().exec("taskkill /F /IM " + properties.getProperty("APPNAME"));
-              }
-              HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-              connection.setRequestMethod("GET");
-              BufferedReader reader =
-                  new BufferedReader(new InputStreamReader(connection.getInputStream()));
+              if (!utils.isLatest(properties)) {
+                System.out.println("Getting the new song!");
+                if (properties.getProperty("AUTO_KILL").equals("ON")) {
+                  Runtime.getRuntime().exec("taskkill /F /IM " + properties.getProperty("APPNAME"));
+                }
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                connection.setRequestMethod("GET");
+                BufferedReader reader =
+                    new BufferedReader(new InputStreamReader(connection.getInputStream()));
 
-              FileOutputStream outputStream = new FileOutputStream(properties.getProperty("NAME"));
-              outputStream.write(Base64.getDecoder().decode(reader.readLine()));
-              outputStream.close();
-              if (properties.getProperty("AUTO_KILL").equals("ON")) {
-                Desktop.getDesktop().open(new File(properties.getProperty("APP_PATH")));
+                FileOutputStream outputStream =
+                    new FileOutputStream(properties.getProperty("NAME"));
+                outputStream.write(Base64.getDecoder().decode(reader.readLine()));
+                outputStream.close();
+                if (properties.getProperty("AUTO_KILL").equals("ON")) {
+                  Desktop.getDesktop().open(new File(properties.getProperty("APP_PATH")));
+                }
+              }else{
+                System.out.println("Latest song already present!");
               }
+
             } catch (IOException ignored) {
             }
           }
