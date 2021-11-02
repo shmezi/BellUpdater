@@ -25,25 +25,36 @@ public class Utils {
   }
 
   public boolean isLatest(Properties properties) {
+    System.out.println("Checking if it's the latest version!");
     try {
       URL url = new URL(properties.getProperty("TIMEURL"));
       HttpURLConnection connection = (HttpURLConnection) url.openConnection();
       connection.setRequestMethod("GET");
+      connection.setRequestProperty("User-Agent", "Mozilla/5.0");
       BufferedReader reader =
           new BufferedReader(new InputStreamReader(connection.getInputStream()));
-
-      if (Files.readAllLines(new File("latest.txt").toPath()).get(0).equals(reader.readLine())) {
-        return true;
-
+      String temp = reader.readLine();
+      if (Files.readAllLines(new File("latest.txt").toPath()).toArray().length > 0) {
+        if (Files.readAllLines(new File("latest.txt").toPath()).get(0).equals(temp)) {
+          System.out.println("Song was the current version of the song!");
+          return true;
+        } else {
+          System.out.println("Song was not the latest version of the song! Getting it now!");
+          Files.write(
+              new File("latest.txt").toPath(),
+              temp.getBytes(),
+              StandardOpenOption.TRUNCATE_EXISTING);
+          return false;
+        }
       } else {
+        System.out.println("Song was not the latest version of the song! Getting it now!");
         Files.write(
-            new File("latest.txt").toPath(),
-            reader.readLine().getBytes(),
-            StandardOpenOption.WRITE);
+            new File("latest.txt").toPath(), temp.getBytes(), StandardOpenOption.TRUNCATE_EXISTING);
         return false;
       }
 
-    } catch (Exception ignored) {
+    } catch (Exception e) {
+      e.printStackTrace();
       return false;
     }
   }
