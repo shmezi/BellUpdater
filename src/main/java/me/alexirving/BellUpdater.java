@@ -20,6 +20,7 @@ public class BellUpdater {
     Properties properties = new Properties();
     properties.load(new FileInputStream("settings.properties"));
     URL url = new URL(properties.getProperty("URL"));
+
     Timer timer = new Timer();
     timer.scheduleAtFixedRate(
         new TimerTask() {
@@ -36,6 +37,7 @@ public class BellUpdater {
 
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 connection.setRequestMethod("GET");
+
                 connection.setRequestProperty("User-Agent", "Mozilla/5.0");
 
                 BufferedReader reader =

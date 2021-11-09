@@ -10,6 +10,7 @@ repositories {
 }
 
 dependencies {
+    implementation ("com.konghq:unirest-java:3.11.09")
 }
 tasks{
 jar{

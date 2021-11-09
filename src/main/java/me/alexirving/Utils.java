@@ -29,11 +29,19 @@ public class Utils {
     try {
       URL url = new URL(properties.getProperty("TIMEURL"));
       HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
       connection.setRequestMethod("GET");
       connection.setRequestProperty("User-Agent", "Mozilla/5.0");
+      System.out.println(
+          "Finished with code: "
+              + connection.getResponseCode()
+              + " And Message: "
+              + connection.getResponseMessage());
+
       BufferedReader reader =
           new BufferedReader(new InputStreamReader(connection.getInputStream()));
       String temp = reader.readLine();
+
       if (Files.readAllLines(new File("latest.txt").toPath()).toArray().length > 0) {
         if (Files.readAllLines(new File("latest.txt").toPath()).get(0).equals(temp)) {
           System.out.println("Song was the current version of the song!");
