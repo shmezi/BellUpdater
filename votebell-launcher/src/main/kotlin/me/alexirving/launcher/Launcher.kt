@@ -37,7 +37,9 @@ fun main() {
         bellVote?.destroy()
         exitProcess(0)
     }
-
+    Runtime.getRuntime().addShutdownHook(Thread{
+        bellVote?.destroy()
+    })
     i.popupMenu = PopupMenu().apply { add(m) }
     getSystemTray().add(i)
 
