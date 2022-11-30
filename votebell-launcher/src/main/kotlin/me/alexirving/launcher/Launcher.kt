@@ -37,7 +37,7 @@ fun main() {
         bellVote?.destroy()
         exitProcess(0)
     }
-    Runtime.getRuntime().addShutdownHook(Thread{
+    Runtime.getRuntime().addShutdownHook(Thread {
         bellVote?.destroy()
     })
     i.popupMenu = PopupMenu().apply { add(m) }
@@ -61,7 +61,7 @@ fun main() {
         bellVote?.destroy()
 
         val assets = gson.fromJson(get(date), JsonObject::class.java).getAsJsonArray("assets")
-            .get(0).asJsonObject
+            .first { it.asJsonObject.get("name").asString == "BellVotes.jar" }.asJsonObject
 
         FileOutputStream("BellVotes.jar").write(URL(assets.get("browser_download_url").asString).readBytes())
         Files.write(Path.of("updated"), assets.get("updated_at").asString.toByteArray())

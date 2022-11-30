@@ -22,7 +22,7 @@ val latest = File("latest")
 val loop = Timer("Updater")
 
 fun main() {
-    val i = TrayIcon(Toolkit.getDefaultToolkit().createImage(getReasourceURL("note.png")))
+    val i = TrayIcon(Toolkit.getDefaultToolkit().createImage(getReasourceURL("notification.png")))
     i.toolTip = "BellApp"
 
     val m = MenuItem("Exit")
