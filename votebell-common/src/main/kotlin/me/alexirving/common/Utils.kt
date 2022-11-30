@@ -19,6 +19,7 @@ object Utils {
 
     fun get(request: HttpRequest): String = client.send(request, BodyHandlers.ofString()).body()
 
-
+    fun getReasourceURL(path: String) =
+        object {}.javaClass.getResource(path)
 
 }

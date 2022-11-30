@@ -1,11 +1,17 @@
 package me.alexirving.launcher
 
 import Utils.get
+import Utils.getReasourceURL
 import Utils.getRequestTemplate
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import me.alexirving.lib.copyOver
 import me.alexirving.lib.pq
+import java.awt.MenuItem
+import java.awt.PopupMenu
+import java.awt.SystemTray.getSystemTray
+import java.awt.Toolkit.getDefaultToolkit
+import java.awt.TrayIcon
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -13,6 +19,7 @@ import java.net.URL
 import java.nio.file.Files
 import java.nio.file.Path
 import java.util.*
+import kotlin.system.exitProcess
 
 val config = Properties()
 val latest = File("updated")
@@ -22,14 +29,31 @@ var bellVote: Process? = null
 val gson = Gson()
 
 fun main() {
+    val i = TrayIcon(getDefaultToolkit().createImage(getReasourceURL("bells.png")))
+    i.toolTip = "BellLauncher"
+
+    val m = MenuItem("Exit")
+    m.addActionListener {
+        bellVote?.destroy()
+        exitProcess(0)
+    }
+
+    i.popupMenu = PopupMenu().apply { add(m) }
+    getSystemTray().add(i)
+
+
     latest.createNewFile()
     copyOver("updater.properties")
     config.load(FileInputStream("updater.properties"))
 
     val date = getRequestTemplate(config.getProperty("GITHUB")).build()
 
-    fun isLatest(): Boolean = gson.fromJson(get(date), JsonObject::class.java).getAsJsonArray("assets")
-        .get(0).asJsonObject.get("updated_at").asString == latest.readText()
+    fun isLatest(): Boolean = try {
+        gson.fromJson(get(date), JsonObject::class.java).getAsJsonArray("assets")
+            .get(0).asJsonObject.get("updated_at").asString == latest.readText()
+    } catch (_: NullPointerException) {
+        true
+    }
 
     fun saveLatest() {
         bellVote?.destroy()
@@ -44,6 +68,7 @@ fun main() {
     }
     if (isLatest()) {
         bellVote = Runtime.getRuntime().exec("java -jar BellVotes.jar")
+        "Started bell app!".pq()
     }
 
     loop.scheduleAtFixedRate(object : TimerTask() {
@@ -54,5 +79,5 @@ fun main() {
             } else
                 "No new app yet :(".pq("LOG")
         }
-    }, 0L, config.getProperty("DELAY").toLong())
+    }, config.getProperty("DELAY").toLong(), config.getProperty("DELAY").toLong())
 }

@@ -1,17 +1,20 @@
 package me.alexirving.app
 
 import Utils.get
+import Utils.getReasourceURL
 import Utils.getRequestTemplate
 import Utils.kill
 import Utils.open
 import me.alexirving.lib.copyOver
 import me.alexirving.lib.pq
+import java.awt.*
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.nio.file.Files
 import java.nio.file.Path
 import java.util.*
+import kotlin.system.exitProcess
 
 val config = Properties()
 val latest = File("latest")
@@ -19,6 +22,18 @@ val latest = File("latest")
 val loop = Timer("Updater")
 
 fun main() {
+    val i = TrayIcon(Toolkit.getDefaultToolkit().createImage(getReasourceURL("note.png")))
+    i.toolTip = "BellApp"
+
+    val m = MenuItem("Exit")
+    m.addActionListener {
+        exitProcess(0)
+    }
+    i.popupMenu = PopupMenu().apply { add(m) }
+    SystemTray.getSystemTray().add(i)
+
+
+
 
     latest.createNewFile()
     copyOver("settings.properties")
