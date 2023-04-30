@@ -29,7 +29,7 @@ var bellVote: Process? = null
 val gson = Gson()
 
 fun main() {
-    val i = TrayIcon(getDefaultToolkit().createImage(getReasourceURL("bells.png")))
+    val i = TrayIcon(getDefaultToolkit().createImage(getReasourceURL("rocket.png")))
     i.toolTip = "BellLauncher"
 
     val m = MenuItem("Exit")

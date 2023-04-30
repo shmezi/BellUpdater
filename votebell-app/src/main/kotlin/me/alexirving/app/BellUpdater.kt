@@ -16,21 +16,26 @@ import java.nio.file.Path
 import java.util.*
 import kotlin.system.exitProcess
 
+
 val config = Properties()
 val latest = File("latest")
 
 val loop = Timer("Updater")
 
 fun main() {
-    val i = TrayIcon(Toolkit.getDefaultToolkit().createImage(getReasourceURL("notification.png")))
-    i.toolTip = "BellApp"
+    val icon = TrayIcon(Toolkit.getDefaultToolkit().createImage(getReasourceURL("bells.png")))
+    icon.toolTip = "BellApp"
 
-    val m = MenuItem("Exit")
-    m.addActionListener {
+    val exitItem = MenuItem("Exit")
+    exitItem.addActionListener {
         exitProcess(0)
     }
-    i.popupMenu = PopupMenu().apply { add(m) }
-    SystemTray.getSystemTray().add(i)
+
+
+
+
+    icon.popupMenu = PopupMenu().apply { add(exitItem) }
+    SystemTray.getSystemTray().add(icon)
 
 
 
